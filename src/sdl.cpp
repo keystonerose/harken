@@ -1,25 +1,22 @@
 #include <sstream>
 #include "sdl.h"
+#include "stringbuilder.h"
 
 namespace SDL {
     
     SDLException::SDLException(const char * const message)
-        : runtime_error{message} {
-            
-        std::ostringstream buffer;
-        buffer << runtime_error::what() << " Error: " << SDL_GetError();
-        m_formattedMessage = buffer.str();
-    }
-    
-    const char * SDLException::what() const noexcept {
-        return m_formattedMessage.c_str();
+        : runtime_error{Util::StringBuilder{} << message << " Error: " << SDL_GetError()} {
     }
 
     SDLManager::SDLManager() {
+        
         auto result = SDL_Init(SDL_INIT_VIDEO);
         if (result != 0) {
             throw SDLException{"Could not initialise SDL."};
         }
+        
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     }
     
     SDLManager::~SDLManager() {
@@ -32,6 +29,11 @@ namespace SDL {
     
     SDLWindow SDLManager::createWindow(const char * const title, const int width, const int height) {
         return SDLWindow{title, width, height, 0};
+    }
+    
+    void SDLManager::setOpenGLVersion(const int major, const int minor) {
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
     }
 
     SDLWindow::SDLWindow(const char * const title, const int width, const int height, const Uint32 flags) {

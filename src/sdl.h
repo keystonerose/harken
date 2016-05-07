@@ -16,13 +16,7 @@ namespace SDL {
     
     class SDLException : public std::runtime_error {
         public:
-        
-            SDLException(const char * message);
-            const char * what() const noexcept override;
-            
-        private:
-            
-            std::string m_formattedMessage;
+            SDLException(const char * const message);
     };
     
     class SDLWindow;
@@ -36,7 +30,7 @@ namespace SDL {
     class SDLManager {
         public:
             
-            SDLManager();  /** Initialises the SDL subsystem. */
+            SDLManager();  /** Initialises the SDL subsystem and sets some default OpenGL attributes. */
             ~SDLManager(); /** Quits the SDL subsystem. */
             
             /**
@@ -54,6 +48,15 @@ namespace SDL {
              */
             
             SDLWindow createWindow(const char * title, int width, int height);
+            
+            /**
+             * Sets OpenGL window attributes specifying the version of OpenGL to be used. If called, should be done
+             * before createWindow() or createFullscreenWindow().
+             * @param major The major version number of OpenGL to use.
+             * @param minor The minor version number of OpenGL to use.
+             */
+            
+            void setOpenGLVersion(int major, int minor);
     };
     
     /**
@@ -69,6 +72,10 @@ namespace SDL {
         friend class SDLManager;
         
         public:
+            
+            /**
+             * Performs the necessary SDL calls to delete the window managed by this SDLWindow.
+             */
 
             ~SDLWindow();
             

@@ -7,8 +7,10 @@
 #include <SDL.h>
 
 #include "sdl.h"
+#include "stringbuilder.h"
 
 using namespace SDL;
+using namespace Util;
 
 void render(SDLWindow& window) {
     
@@ -33,23 +35,14 @@ int main() {
     try {
         
         SDLManager sdl;
-        
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); //3
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        
+        sdl.setOpenGLVersion(3, 3);
         auto window = sdl.createWindow("Harken", 1024, 768);
         
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective (60.0, window.aspectRatio(), 1.0, 200.0);
+        const auto glewResult = glewInit();
+        if (glewResult != GLEW_OK) {
+            throw std::runtime_error{StringBuilder{} << "Could not initialise GLEW. Error: " << glewGetErrorString(glewResult)};
+        }
         
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        
-        glewExperimental = GL_TRUE;
-        glewInit();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         
         auto running = true;
