@@ -1,7 +1,9 @@
-include_directories(${FREETYPE_INCLUDE_DIRS})
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED)
 
 add_library(${LIB_NAME} STATIC
-    placeholder.cpp
+    sdl.cpp
 )
 
+include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(${LIB_NAME})

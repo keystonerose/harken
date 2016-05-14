@@ -1,11 +1,12 @@
-#include <sstream>
 #include "sdl.h"
 #include "stringbuilder.h"
 
-namespace SDL {
+#include <sstream>
+
+namespace Harken {
     
     SDLException::SDLException(const char * const message)
-        : runtime_error{Util::StringBuilder{} << message << " Error: " << SDL_GetError()} {
+        : runtime_error{StringBuilder{} << message << " Error: " << SDL_GetError()} {
     }
 
     SDLManager::SDLManager() {
@@ -27,7 +28,11 @@ namespace SDL {
         return SDLWindow{title, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP};
     }
     
-    SDLWindow SDLManager::createWindow(const char * const title, const int width, const int height) {
+    SDLWindow SDLManager::createWindow(
+        const char * const title,
+        const int width,
+        const int height) {
+        
         return SDLWindow{title, width, height, 0};
     }
     
@@ -36,15 +41,19 @@ namespace SDL {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
     }
 
-    SDLWindow::SDLWindow(const char * const title, const int width, const int height, const Uint32 flags) {
+    SDLWindow::SDLWindow(
+        const char * const title,
+        const int width,
+        const int height,
+        const Uint32 flags) {
         
         m_handle = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags | SDL_WINDOW_OPENGL);
         if (!m_handle) {
             throw SDLException{"Could not create an SDL window."};
         }
         
-        // The OpenGL context is another candidate for factoring out into an RAII class of its own, but it's not much
-        // effort to just incorporate it into SDLWindow for now.
+        // The OpenGL context is another candidate for factoring out into an RAII class of its own,
+        // but it's not much effort to just incorporate it into SDLWindow for now.
         
         m_glContext = SDL_GL_CreateContext(m_handle);
         if (!m_glContext) {
@@ -95,7 +104,7 @@ namespace SDL {
         }
     }
     
-    Harken::Size2i SDLWindow::size() const {
+    Size2<int> SDLWindow::size() const {
 
         auto width  = 0;
         auto height = 0;

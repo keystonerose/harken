@@ -20,12 +20,12 @@ Path=gcc
 Type=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0
+Launch Configurations=Launch Configuration 0,Launch Configuration 1
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
 Configured Launchers=nativeAppLauncher
-Name=app
+Name=Main App
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
@@ -36,6 +36,24 @@ EnvironmentGroup=
 Executable=file:///home/james/development/projects/harken2/
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 Project Target=Harken2,src,app
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=Test All
+Type=Native Application
+
+[Launch][Launch Configuration 1][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x04\x00\x00\x00\x0e\x00H\x00a\x00r\x00k\x00e\x00n\x002\x00\x00\x00\x06\x00s\x00r\x00c\x00\x00\x00\x08\x00t\x00e\x00s\x00t\x00\x00\x00\x10\x00t\x00e\x00s\x00t\x00-\x00a\x00l\x00l)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/james/development/projects/harken2/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=Harken2,src,test,test-all
 Use External Terminal=false
 Working Directory=
 isExecutable=false

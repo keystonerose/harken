@@ -1,16 +1,16 @@
+#include "harken/sdl.h"
+#include "harken/vector.h"
+#include "harken/stringbuilder.h"
+
+#include <GL/glew.h>
+#include <SDL.h>
+
+#include <array>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
-#include <GL/glew.h>
-#include <GL/glu.h>
-#include <SDL.h>
-
-#include "sdl.h"
-#include "stringbuilder.h"
-
-using namespace SDL;
-using namespace Util;
+using namespace Harken;
 
 void render(SDLWindow& window) {
     
@@ -45,9 +45,28 @@ int main() {
         
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         
+        /*
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        
+        std::array<Vector3f, 1> vertices{
+            Vector3f{0.0f, 0.0f, 0.0f}
+        };
+        
+        const auto * const vertexData = vertices.data();
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        */
+        
         auto running = true;
         while (running) {
         
+            // TODO: move this into SDLManager
+            
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 

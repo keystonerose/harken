@@ -28,8 +28,6 @@ namespace Harken {
         T m_width;
         T m_height;
     };
-    
-    using Size2i = Size2<int>;
 }
 
 #endif
