@@ -20,6 +20,12 @@ namespace VectorTest {
     namespace {
         std::array<int, 3> externalData;
     }
+    
+    /**
+     * Constructs a <tt>Vector&lt;int, 3&gt;</tt> object for testing. For owning vectors, performs
+     * the construction directly; for non-owning vectors, sets up some external data to contain the
+     * specified coordinates and then constructs a @c VectorSpan pointing to those external data.
+     */
 
     template<template<typename, int> class OwnershipPolicy>
     Vector<int, 3, OwnershipPolicy> createVector3i(const int x, const int y, const int z) {
@@ -34,16 +40,30 @@ namespace VectorTest {
         return VectorSpan3i{externalData.data()};
     }
     
+    // Most of the vector test functions are templated by the vector ownership policy. This means
+    // that the same tests can be run for both vectors and vector spans while keeping the
+    // implementation differences isolated to template specialisations where necessary.
+    
+    /**
+     * Tests that the components of an owning or non-owning vector can be accessed via the subscript
+     * operator, and that doing so yields the expected values.
+     */
+    
     template<template<typename, int> class OwnershipPolicy>
     void testAccessorSubscript(Tester& tester) {
         
         const std::array<int, 3> values{1, 2, 3};
-        Vector3i v{values[0], values[1], values[2]};
+        const auto v = createVector3i<OwnershipPolicy>(values[0], values[1], values[2]);
         
         for (auto i = 0; i < 3; ++i) {
             tester.assertEqual(StringBuilder{} << "Accessing operator[](" << i << ")", v[i], values[i]);
         }
     }
+    
+    /**
+     * Tests that the equality operation for owning and non-owning vectors is implemented so that
+     * vectors are equal to themselves.
+     */
 
     template<template<typename, int> class OwnershipPolicy>
     void testEqualityReflexivity(Tester& tester) {
@@ -51,6 +71,12 @@ namespace VectorTest {
         const auto v = createVector3i<OwnershipPolicy>(1, 2, 3);
         tester.assertEqual("operator== reflexivity", v, v);
     }
+    
+    /**
+     * Tests that owning and non-owning vectors provide mutator methods (set{X,Y,Z}) that can be
+     * used to modify either the corresponding components of the vector (in the case of an owning
+     * vector) or the elements of the underlying array (in the case of a non-owning vector).
+     */
     
     template<template<typename, int> class OwnershipPolicy>
     void testMutatorMethods(Tester& tester) {
@@ -79,6 +105,12 @@ namespace VectorTest {
         }
     }
     
+    /**
+     * Tests that owning and non-owning vectors provide a subscript operator that can be used to
+     * modify elements in the vector (in the case of an owning vector) or in the underlying array
+     * (in the case of a non-owning vector).
+     */
+    
     template<template<typename, int> class OwnershipPolicy>
     void testMutatorSubscript(Tester& tester) {
         
@@ -105,6 +137,10 @@ namespace VectorTest {
             tester.assertEqual(StringBuilder{} << "Mutating operator[]: span target " << i, values[i], externalData[i]);
         }
     }
+    
+    /**
+     * Tests that owning vectors are initialised to zero when constructed.
+     */
     
     void testZeroInitialisation(Tester& tester) {
         Vector3i v;
