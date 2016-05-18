@@ -3,6 +3,7 @@
 
 #include <array>
 #include <ostream>
+#include <type_traits>
 
 namespace Harken {
     
@@ -202,7 +203,25 @@ namespace Harken {
     class Vector : public OwnershipPolicy<T, Size> {
     public:
         
+        using ComponentType = T;
         using OwnershipPolicy<T, Size>::OwnershipPolicy;
+        
+        // Even though the constructors for the vector are provided by the ownership policy class,
+        // we must explicitly provide a default constructor so that Vector is not considered a POD
+        // type; this prevents us from getting an error when a const vector is default-constructed.
+        // This constructor will only actually be usable if the ownership policy supports default
+        // construction.
+        
+        Vector() {}
+        
+        template<typename X, template<typename, int> class RHSOwnershipPolicy>
+        Vector<T, Size, OwnershipPolicy>& operator+=(const Vector<X, Size, RHSOwnershipPolicy>& rhs) {
+            
+            for (auto i = 0; i < Size; ++i) {
+                (*this)[i] += rhs[i];
+            }
+            return *this;
+        }
     };
     
     /**
@@ -259,7 +278,6 @@ namespace Harken {
         os << ')';
         return os;
     }
-
     
     template<typename T, int Size>
     using VectorSpan = Vector<T, Size, SpanVectorPolicy>;
