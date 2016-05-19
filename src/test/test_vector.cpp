@@ -1,3 +1,4 @@
+#include "harken/math.h"
 #include "harken/vector.h"
 
 #include <boost/test/unit_test.hpp>
@@ -9,6 +10,7 @@ using Harken::VectorSpan;
 using Vector3i = Vector<int, 3>;
 using Vector3f = Vector<float, 3>;
 using VectorSpan3i = VectorSpan<int, 3>;
+using VectorSpan3f = VectorSpan<float, 3>;
 
 BOOST_AUTO_TEST_SUITE(vector)
 
@@ -49,6 +51,28 @@ BOOST_AUTO_TEST_CASE(construction_accessors) {
     
     const VectorSpan3i spanCopyConstructedVectorSpan{vectorSpan};
     BOOST_CHECK_EQUAL(spanCopyConstructedVectorSpan, vectorSpan);
+}
+
+BOOST_AUTO_TEST_CASE(assignment) {
+    
+    std::array<int, 3> externalData{1, 2, 3};
+    const VectorSpan3i vectorSpanToCopyFrom{externalData.data()};
+    
+    Vector3f mutatingVector;
+    mutatingVector = vectorSpanToCopyFrom;
+    
+    BOOST_CHECK(Harken::almostEqual(mutatingVector, Vector3f(1.0f, 2.0f, 3.0f)));
+    
+    Vector3i vectorToCopyFrom{1, 2, 3};
+    
+    std::array<float, 3> mutatingExternalData{0.0f, 0.0f, 0.0f};
+    VectorSpan3f mutatingVectorSpan{mutatingExternalData.data()};
+    mutatingVectorSpan = vectorToCopyFrom;
+    
+    BOOST_CHECK(Harken::almostEqual(mutatingVectorSpan, Vector3f(1.0f, 2.0f, 3.0f)));
+    BOOST_CHECK(Harken::almostEqual(mutatingExternalData[0], 1.0f));
+    BOOST_CHECK(Harken::almostEqual(mutatingExternalData[1], 2.0f));
+    BOOST_CHECK(Harken::almostEqual(mutatingExternalData[2], 3.0f));
 }
 
 BOOST_AUTO_TEST_CASE(mutators) {

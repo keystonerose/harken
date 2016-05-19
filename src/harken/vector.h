@@ -214,6 +214,20 @@ namespace Harken {
         
         Vector() {}
         
+        // Vectors of any ownership policy can be assigned to from vectors of any other ownership 
+        // policy (and compatible type). However, only owning vectors can be constructed as copies
+        // of another vector (since a non-owning vector must first be told where to access its data
+        // before it can be set); this behaviour is implemented in the ownership policy.
+        
+        template<typename X, template<typename, int> class RHSOwnershipPolicy>
+        Vector<T, Size, OwnershipPolicy>& operator=(const Vector<X, Size, RHSOwnershipPolicy>& rhs) {
+            
+            for (auto i = 0; i < Size; ++i) {
+                (*this)[i] = rhs[i];
+            }
+            return *this;
+        }
+        
         template<template<typename, int> class RHSOwnershipPolicy>
         Vector<T, Size, OwnershipPolicy>& operator+=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
             
