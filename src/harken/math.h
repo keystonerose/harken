@@ -20,8 +20,8 @@ namespace Harken {
     
     template<
         typename Float,
-        typename = std::enable_if_t<std::is_floating_point<Float>::value>>
-        
+        typename = std::enable_if_t<std::is_floating_point<Float>::value>
+    >    
     bool almostEqual(const Float lhs, const Float rhs,
                      const Float maxRelDiff = std::numeric_limits<Float>::epsilon()) {
         
@@ -43,8 +43,8 @@ namespace Harken {
         typename Float, int Size,
         template<typename, int> class LHSOwnershipPolicy,
         template<typename, int> class RHSOwnershipPolicy,
-        typename = std::enable_if_t<std::is_floating_point<Float>::value>>
-        
+        typename = std::enable_if_t<std::is_floating_point<Float>::value>
+    >    
     bool almostEqual(const Vector<Float, Size, LHSOwnershipPolicy>& lhs,
                      const Vector<Float, Size, RHSOwnershipPolicy>& rhs,
                      const Float maxRelDiff = std::numeric_limits<Float>::epsilon()) {

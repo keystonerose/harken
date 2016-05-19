@@ -214,26 +214,30 @@ namespace Harken {
         
         Vector() {}
         
-        template<typename X, template<typename, int> class RHSOwnershipPolicy>
-        Vector<T, Size, OwnershipPolicy>& operator+=(const Vector<X, Size, RHSOwnershipPolicy>& rhs) {
+        template<template<typename, int> class RHSOwnershipPolicy>
+        Vector<T, Size, OwnershipPolicy>& operator+=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
             
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] += rhs[i];
             }
             return *this;
         }
+        
+        template<template<typename, int> class RHSOwnershipPolicy>
+        Vector<T, Size, OwnershipPolicy>& operator-=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+            
+            for (auto i = 0; i < Size; ++i) {
+                (*this)[i] -= rhs[i];
+            }
+            return *this;
+        }
     };
-    
-    /**
-     * Determines whether two vectors are equal; that is, whether all of their components are equal.
-     * The comparison is performed component-wise using <tt>T::operator==</tt>; 
-     */
     
     template<
         typename T, int Size,
         template<typename, int> class LHSOwnershipPolicy,
         template<typename, int> class RHSOwnershipPolicy
-    >
+    >    
     bool operator==(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
                     const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
         
@@ -244,20 +248,41 @@ namespace Harken {
         return i == Size;
     }
     
-    /**
-     * Determines whether two vectors are not equal; that is, whether at least one of their 
-     * components is not equal. Equivalent to <tt>!(lhs == rhs)</tt>.
-     */
+    template<
+        typename T, int Size,
+        template<typename, int> class LHSOwnershipPolicy,
+        template<typename, int> class RHSOwnershipPolicy
+    >    
+    bool operator!=(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
+                    const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+    
+        return !(lhs == rhs);
+    }
     
     template<
         typename T, int Size,
         template<typename, int> class LHSOwnershipPolicy,
         template<typename, int> class RHSOwnershipPolicy
     >
-    bool operator!=(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
-                    const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+    Vector<T, Size> operator+(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
+                              const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+        
+        Vector<T, Size> result{lhs};
+        result += rhs;
+        return result;
+    }
     
-        return !(lhs == rhs);
+    template<
+        typename T, int Size,
+        template<typename, int> class LHSOwnershipPolicy,
+        template<typename, int> class RHSOwnershipPolicy
+    >   
+    Vector<T, Size> operator-(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
+                              const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+        
+        Vector<T, Size> result{lhs};
+        result -= rhs;
+        return result;
     }
     
     /**
