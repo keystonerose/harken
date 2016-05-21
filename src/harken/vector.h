@@ -2,6 +2,8 @@
 #define HARKEN_VECTOR_H
 
 #include <array>
+#include <cassert>
+#include <cstddef>
 #include <ostream>
 #include <type_traits>
 
@@ -170,6 +172,19 @@ namespace Harken {
             : m_v{v} {
         }
         
+        /**
+         * Constructs a vector spanning data contained within the <tt>std::array</tt> @p v. The
+         * offset of the data to span within @p v is given by @p offset. There must be at least 
+         * @c Size elements at @p offset within @p v.
+         */
+        
+        template<std::size_t TargetSize>
+        explicit SpanVectorPolicy(std::array<T, TargetSize>& v, const int offset = 0)
+            : m_v{v.data() + offset} {
+                
+            assert(offset <= TargetSize - Size && "Vector span target is outside of array bounds.");
+        }
+        
         T& operator[](const int i) {
             return m_v[i];
         }
@@ -197,6 +212,8 @@ namespace Harken {
      * typically also provide constructors which are inherited by the vector itself. Calling
      * <tt>operator[]</tt> with an index outside the valid range (from <tt>0</tt> to
      * <tt>Size - 1</tt>) is undefined behaviour.
+     * 
+     * The interface for the vector's basic operations is based upon that of <tt>std::complex</tt>.
      */
     
     template<typename T, int Size, template<typename, int> class OwnershipPolicy = OwningVectorPolicy>
@@ -245,6 +262,22 @@ namespace Harken {
             }
             return *this;
         }
+        
+        Vector<T, Size, OwnershipPolicy>& operator*=(const T rhs) {
+            
+            for (auto i = 0; i < Size; ++i) {
+                (*this)[i] *= rhs;
+            }
+            return *this;
+        }
+        
+        Vector<T, Size, OwnershipPolicy>& operator/=(const T rhs) {
+            
+            for (auto i = 0; i < Size; ++i) {
+                (*this)[i] /= rhs;
+            }
+            return *this;
+        }
     };
     
     template<
@@ -273,6 +306,20 @@ namespace Harken {
         return !(lhs == rhs);
     }
     
+    // Note that all non-assigning arithmetic operations upon a non-owning vector return a vector
+    // that owns (a copy of) the original data, to prevent surprising mutations-at-a-distance of
+    // the external data.
+    
+    template<typename T, int Size, template<typename, int> class OwnershipPolicy>
+    Vector<T, Size> operator+(const Vector<T, Size, OwnershipPolicy>& val) {
+        return val;
+    }
+    
+    template<typename T, int Size, template<typename, int> class OwnershipPolicy>
+    Vector<T, Size> operator-(const Vector<T, Size, OwnershipPolicy>& val) {
+        return -1 * val;
+    }
+    
     template<
         typename T, int Size,
         template<typename, int> class LHSOwnershipPolicy,
@@ -290,12 +337,33 @@ namespace Harken {
         typename T, int Size,
         template<typename, int> class LHSOwnershipPolicy,
         template<typename, int> class RHSOwnershipPolicy
-    >   
+    >    
     Vector<T, Size> operator-(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
                               const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
         
         Vector<T, Size> result{lhs};
         result -= rhs;
+        return result;
+    }
+    
+    template<typename T, int Size, template<typename, int> class OwnershipPolicy>
+    Vector<T, Size> operator*(const Vector<T, Size, OwnershipPolicy>& lhs, const T rhs) {
+        
+        Vector<T, Size> result{lhs};
+        result *= rhs;
+        return result;
+    }
+    
+    template<typename T, int Size, template<typename, int> class OwnershipPolicy>
+    Vector<T, Size> operator*(const T lhs, const Vector<T, Size, OwnershipPolicy>& rhs) {
+        return rhs * lhs;
+    }
+    
+    template<typename T, int Size, template<typename, int> class OwnershipPolicy>
+    Vector<T, Size> operator/(const Vector<T, Size, OwnershipPolicy>& lhs, const T rhs) {
+        
+        Vector<T, Size> result{lhs};
+        result /= rhs;
         return result;
     }
     
