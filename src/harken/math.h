@@ -12,7 +12,7 @@ namespace Harken {
     /**
      * Determines whether two floating-point numbers are within some maximum relative distance of
      * each other. Returns @c true if the ratio of the difference between @p lhs and @p rhs to the
-     * largest of their magnitudes is less than @p maxRelDiff and @c false otherwise. The default 
+     * largest of their magnitudes is less than @p maxRelDiff and @c false otherwise. The default
      * @p maxRelDiff value is generally sufficient to account for the error arising from simple
      * calculations, but for more complex ones it may be necessary to empirically determine a
      * specific value for this parameter.

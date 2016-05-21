@@ -209,4 +209,13 @@ BOOST_AUTO_TEST_CASE(scalar_multiplication) {
     BOOST_CHECK(Harken::almostEqual(floatQuotient, Vector3f(0.5f, 1.0f, 1.5f)));
 }
 
+BOOST_AUTO_TEST_CASE(vector_products) {
+    
+    BOOST_CHECK_EQUAL(Harken::dot(Vector3i(1, 2, 3), Vector3i(4, 5, 6)), 32);
+    BOOST_CHECK_EQUAL(Harken::dot(Vector3i(1, 1, 0), Vector3i(-1, 1, 0)), 0);
+    
+    BOOST_CHECK_EQUAL(Harken::cross(Vector3i(1, 2, 3), Vector3i(4, 5, 6)), Vector3i(-3, 6, -3));
+    BOOST_CHECK_EQUAL(Harken::cross(Vector3i(1, 2, 3), Vector3i(2, 4, 6)), Vector3i(0, 0, 0));
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -102,7 +102,7 @@ namespace Harken {
     public:
         
         /**
-         * Constructs the vector and fills its coordinate data with zeros.
+         * Constructs the vector and initialises it to zero.
          */
         
         OwningVectorPolicy() {
@@ -114,7 +114,7 @@ namespace Harken {
          * constructor must be called with <tt>Size</tt> arguments, each corresponding to a
          * component of the vector.
          */
-        
+    
         template<typename... Args>
         OwningVectorPolicy(Args... args)
             : m_v{args...} {
@@ -156,6 +156,7 @@ namespace Harken {
      * Ownership policy for a vector whose coordinate data are stored elsewhere (that is, a vector
      * "span"). Provides an implementation of <tt>operator[]</tt> for accessing and mutating these
      * data, and a constructor for specifying where the data should be observed from and written to.
+     * Vectors using this ownership policy are cheap to copy.
      */
     
     template<typename T, int Size>
@@ -163,7 +164,7 @@ namespace Harken {
     public:
     
         /**
-         * Constructs a vector spanning data at @p v. There must be at least @c Size coordinate 
+         * Constructs a vector spanning data at @p v. There must be at least @c Size coordinate
          * items at the location pointed to by @p v, since the vector may attempt to read and write
          * data via this pointer up to an offset of @c Size.
          */
@@ -201,11 +202,11 @@ namespace Harken {
     };
     
     /**
-     * A mathematical vector of arbitrary size that provides common operations for performing 
+     * A mathematical vector of arbitrary size that provides common operations for performing
      * spatial computations. The ownership strategy of the Vector is separated out into a separate
-     * policy class. The most common and simple case is when the vector itself owns its coordinate 
-     * data, but the policy-based design also trivially allows the case when the vector is a
-     * view onto data stored elsewhere (such as in an OpenGL vertex buffer object).
+     * policy class. The most common and simple case is when the vector itself owns its coordinate
+     * data, but the policy-based design also trivially allows the case when the vector is a view
+     * onto data stored elsewhere (such as in an OpenGL vertex buffer object).
      * 
      * Ownership policies must provide (at a minimum) const and non-const implementations of 
      * <tt>operator[]</tt>, which become the basis for the vector's other operations. They will
@@ -225,13 +226,13 @@ namespace Harken {
         
         // Even though the constructors for the vector are provided by the ownership policy class,
         // we must explicitly provide a default constructor so that Vector is not considered a POD
-        // type; this prevents us from getting an error when a const vector is default-constructed.
-        // This constructor will only actually be usable if the ownership policy supports default
-        // construction.
+        // type; this prevents us from getting an error when a const Vector (Span) is
+        // default-constructed. This constructor will only actually be usable if the ownership
+        // policy supports default construction.
         
         Vector() {}
         
-        // Vectors of any ownership policy can be assigned to from vectors of any other ownership 
+        // Vectors of any ownership policy can be assigned to from vectors of any other ownership
         // policy (and compatible type). However, only owning vectors can be constructed as copies
         // of another vector (since a non-owning vector must first be told where to access its data
         // before it can be set); this behaviour is implemented in the ownership policy.
@@ -307,8 +308,8 @@ namespace Harken {
     }
     
     // Note that all non-assigning arithmetic operations upon a non-owning vector return a vector
-    // that owns (a copy of) the original data, to prevent surprising mutations-at-a-distance of
-    // the external data.
+    // that owns (a copy of) the original data, to prevent surprising mutations-at-a-distance of the
+    // external data.
     
     template<typename T, int Size, template<typename, int> class OwnershipPolicy>
     Vector<T, Size> operator+(const Vector<T, Size, OwnershipPolicy>& val) {
@@ -384,6 +385,50 @@ namespace Harken {
         
         os << ')';
         return os;
+    }
+    
+    /**
+     * Computes the cross (vector) product of two 3-dimensional vectors. Returns a 3D vector
+     * perpendicular to both @p lhs and @p rhs whose magnitude is equal to the area of the 
+     * parallelogram that they span, oriented "upwards" out of the plane containing @p lhs and
+     * @p rhs if the latter lies anticlockwise of the former, or "downwards" in the reverse
+     * situation.
+     */
+    
+    template<
+        typename T,
+        template<typename, int> class LHSOwnershipPolicy,
+        template<typename, int> class RHSOwnershipPolicy
+    >
+    Vector<T, 3> cross(const Vector<T, 3, LHSOwnershipPolicy>& lhs,
+                       const Vector<T, 3, RHSOwnershipPolicy>& rhs) {
+        
+        return Vector<T, 3>{
+            lhs.y() * rhs.z() - lhs.z() * rhs.y(),
+            lhs.z() * rhs.x() - lhs.x() * rhs.z(),
+            lhs.x() * rhs.y() - lhs.y() * rhs.x()
+        };
+    }
+    
+    /**
+     * Computes the dot (scalar) product of two vectors of arbitrary (but equal) dimension. Returns
+     * the product of the norm of @p lhs, the norm of @p rhs, and the cosine of the angle between
+     * @p lhs and @p rhs.
+     */
+    
+    template<
+        typename T, int Size,
+        template<typename, int> class LHSOwnershipPolicy,
+        template<typename, int> class RHSOwnershipPolicy
+    >
+    T dot(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
+          const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+        
+        auto result = T{0};
+        for (auto i = 0; i < Size; ++i) {
+            result += lhs[i] * rhs[i];
+        }
+        return result;
     }
     
     template<typename T, int Size>
