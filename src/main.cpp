@@ -1,4 +1,6 @@
 #include "harken/sdl.h"
+#include "harken/shader.h"
+#include "harken/shaderprogram.h"
 #include "harken/vector.h"
 #include "harken/stringbuilder.h"
 
@@ -44,6 +46,9 @@ int main() {
         }
         
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        
+        Shader vertexShader{GL_VERTEX_SHADER, "passthrough.vert"};
+        Shader fragmentShader{GL_FRAGMENT_SHADER, "red.frag"};
         
         /*
         GLuint vbo;

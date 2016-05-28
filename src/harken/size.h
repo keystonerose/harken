@@ -1,6 +1,8 @@
 #ifndef HARKEN_SIZE_H
 #define HARKEN_SIZE_H
 
+#include "global.h"
+
 namespace Harken {
  
     template<typename T>

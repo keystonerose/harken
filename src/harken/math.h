@@ -1,6 +1,7 @@
 #ifndef HARKEN_MATH_H
 #define HARKEN_MATH_H
 
+#include "global.h"
 #include "vector.h"
 
 #include <cmath>

@@ -7,8 +7,8 @@
 namespace Harken {
 
     /**
-     * Facilitates the formation of temporary in-place-formatted strings to be passed as arguments to various other
-     * functions; for example, when constructing an exception with a custom message.
+     * Facilitates the formation of temporary in-place-formatted strings to be passed as arguments
+     * to various other functions; for example, when constructing an exception with a custom message.
      */
 
     class StringBuilder {

@@ -6,7 +6,7 @@
 namespace Harken {
     
     SDLException::SDLException(const char * const message)
-        : runtime_error{StringBuilder{} << message << " Error: " << SDL_GetError()} {
+        : Exception{StringBuilder{} << message << " Error: " << SDL_GetError()} {
     }
 
     SDLManager::SDLManager() {

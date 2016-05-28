@@ -1,11 +1,12 @@
 #ifndef HARKEN_SDL_H
 #define HARKEN_SDL_H
 
+#include "global.h"
+#include "exception.h"
 #include "size.h"
 
 #include <SDL.h>
 
-#include <stdexcept>
 #include <string>
 
 namespace Harken {
@@ -16,9 +17,16 @@ namespace Harken {
      * information it returns in the string returned by what().
      */
     
-    class SDLException : public std::runtime_error {
+    class SDLException : public Exception {
     public:
-        explicit SDLException(const char * const message);
+        
+        /**
+         * Constructs the SDLException to display a specified message along with the SDL error
+         * information. @p message need not exist beyond the construction of the SDLException
+         * object.
+         */
+        
+        explicit SDLException(const char * message);
     };
     
     class SDLWindow;

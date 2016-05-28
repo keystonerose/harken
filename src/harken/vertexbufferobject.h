@@ -1,6 +1,7 @@
 #ifndef HARKEN_VERTEXBUFFEROBJECT_H
 #define HARKEN_VERTEXBUFFEROBJECT_H
 
+#include "global.h"
 #include "vector.h"
 
 #include <initializer_list>
