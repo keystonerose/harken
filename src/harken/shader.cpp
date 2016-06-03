@@ -9,34 +9,34 @@
 #include <string>
 
 namespace Harken {
-    
+
     namespace {
-        
+
         /**
          * Reads the contents of a file on disk into a string. Throws an IOException of the file at
          * @p filePath could not be opened for whatever reason.
          * @param filePath An absolute filesystem path to the file to read.
          */
-        
+
         std::string readFile(const char* const filePath) {
-            
+
             std::ifstream inputFile{filePath};
             if (!inputFile) {
                 throw IOException{StringBuilder{} << "Could not open file \"" << filePath << "\"."};
             }
-            
+
             return std::string{std::istreambuf_iterator<char>{inputFile},
                                std::istreambuf_iterator<char>{}};
         }
-        
+
         /**
-         * Returns a string naming the type of shader referred to by the OpenGL enumerated code 
+         * Returns a string naming the type of shader referred to by the OpenGL enumerated code
          * @p type. @p type must be one of: @c GL_VERTEX_SHADER, @c GL_TESS_CONTROL_SHADER,
          * @c GL_TESS_EVALUATION_SHADER, @c GL_GEOMETRY_SHADER or @c GL_FRAGMENT_SHADER.
          */
-       
+
         const char* shaderTypeName(const GLenum type) {
-            
+
             switch (type) {
             case GL_FRAGMENT_SHADER:
                 return "fragment";
@@ -53,11 +53,11 @@ namespace Harken {
             }
         }
     }
-    
+
     ShaderCompilationException::ShaderCompilationException(const GLenum type,
                                                            const char* const sourceFilePath,
                                                            const char* const infoLog)
-    
+
         : Exception{StringBuilder{} << "Error compiling " << shaderTypeName(type)
                                     << " shader from \"" << sourceFilePath << "\". " << infoLog} {
     }
@@ -65,7 +65,7 @@ namespace Harken {
     Shader::Shader(const GLenum type, const char* const sourceFilePath) {
 
         m_id = glCreateShader(type);
-        
+
         const auto source = readFile(sourceFilePath);
         const char* const glSource[] = {source.c_str()};
 
@@ -85,7 +85,21 @@ namespace Harken {
         }
     }
 
+    Shader::Shader(Shader&& rhs)
+        : m_id{rhs.m_id} {
+
+        rhs.m_id = 0;
+    }
+
     Shader::~Shader() {
         glDeleteShader(m_id);
+    }
+
+    Shader& Shader::operator=(Shader&& rhs) {
+
+        m_id = rhs.m_id;
+        rhs.m_id = 0;
+
+        return *this;
     }
 }

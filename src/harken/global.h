@@ -5,11 +5,11 @@
 #include <type_traits>
 
 namespace Harken {
- 
+
     // We in various places need OpenGL's GLchar type to be interoperable with the C++ char, both
     // when passing string information in to OpenGL and when reading it out from OpenGL and feeding
     // it into (say) an std::string.
-    // 
+    //
     // A char is required by the standard to be the smallest addressable type, so
     // sizeof(char) <= sizeof(GLchar). Furthermore, the standard apparently [1] says that char is at
     // least 8 bits, and OpenGL apparently [2] specifies that GLchar must be 8 bits. Tying this all
