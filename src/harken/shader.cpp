@@ -62,9 +62,8 @@ namespace Harken {
                                     << " shader from \"" << sourceFilePath << "\". " << infoLog} {
     }
 
-    Shader::Shader(const GLenum type, const char* const sourceFilePath) {
-
-        m_id = glCreateShader(type);
+    Shader::Shader(const GLenum type, const char* const sourceFilePath)
+        : GLHandle<Shader>{type} {
 
         const auto source = readFile(sourceFilePath);
         const char* const glSource[] = {source.c_str()};
@@ -84,22 +83,12 @@ namespace Harken {
             throw ShaderCompilationException{type, sourceFilePath, infoLog.get()};
         }
     }
-
-    Shader::Shader(Shader&& rhs)
-        : m_id{rhs.m_id} {
-
-        rhs.m_id = 0;
+    
+    void Shader::create(const GLenum type) {
+        m_id = glCreateShader(type);
     }
 
-    Shader::~Shader() {
+    void Shader::destroy() {
         glDeleteShader(m_id);
-    }
-
-    Shader& Shader::operator=(Shader&& rhs) {
-
-        m_id = rhs.m_id;
-        rhs.m_id = 0;
-
-        return *this;
     }
 }

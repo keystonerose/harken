@@ -12,8 +12,6 @@ namespace Harken {
     class VertexBufferObject {
     public:
         
-        VertexBufferObject(std::initializer_list<Vector3> vertices);
-        
     private:
         std::vector<GLfloat> m_data;
     };

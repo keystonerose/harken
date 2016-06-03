@@ -9,36 +9,13 @@ namespace Harken {
         : Exception{StringBuilder{} << "Error linking shader program. " << infoLog} {
     }
 
-    ShaderProgram::ShaderProgram() {
-        m_id = glCreateProgram();
-    }
-
-    ShaderProgram::ShaderProgram(ShaderProgram&& rhs)
-        : m_id{rhs.m_id} {
-
-        rhs.m_id = 0;
-    }
-
-    ShaderProgram::ShaderProgram(std::initializer_list<std::shared_ptr<Shader>> shaders)
-        : ShaderProgram{} {
+    ShaderProgram::ShaderProgram(std::initializer_list<std::shared_ptr<Shader>> shaders) {
 
         for (const auto& shader : shaders) {
             attach(std::move(shader));
         }
 
         link();
-    }
-
-    ShaderProgram::~ShaderProgram() {
-        glDeleteProgram(m_id);
-    }
-
-    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& rhs) {
-
-        m_id = rhs.m_id;
-        rhs.m_id = 0;
-
-        return *this;
     }
 
     void ShaderProgram::attach(std::shared_ptr<Shader> shader) {
@@ -49,6 +26,14 @@ namespace Harken {
 
         glAttachShader(m_id, shader->m_id);
         m_attachedShaders.push_back(std::move(shader));
+    }
+    
+    void ShaderProgram::create() {
+        m_id = glCreateProgram();
+    }
+    
+    void ShaderProgram::destroy() {
+        glDeleteProgram(m_id);
     }
 
     void ShaderProgram::link() {

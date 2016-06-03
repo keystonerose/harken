@@ -1,8 +1,9 @@
 #ifndef HARKEN_SHADER_H
 #define HARKEN_SHADER_H
 
-#include "exception.h"
 #include "global.h"
+#include "exception.h"
+#include "glhandle.h"
 
 #include <GL/glew.h>
 
@@ -44,9 +45,10 @@ namespace Harken {
      * be linked into a ShaderProgram.
      */
 
-    class Shader {
+    class Shader : public GLHandle<Shader> {
+        friend class GLHandle<Shader>;
         friend class ShaderProgram;
-
+        
     public:
         
         /**
@@ -56,33 +58,22 @@ namespace Harken {
          */
 
         Shader(GLenum type, const char * sourceFilePath);
-        
-        /**
-         * Instructs OpenGL to delete the shader object handled by this Shader instance.
-         */
-        
-        ~Shader();
-
-        Shader(const Shader&) = delete;
-        Shader& operator=(const Shader&) = delete;
-
-        /**
-         * Constructs a new Shader instance that replaces @p rhs as a handle to the underlying
-         * OpenGL shader object. After the new Shader is constructed, @p rhs is no longer a handle
-         * to a valid shader object, and will not cause OpenGL to destroy it when its lifetime ends.
-         */
-
-        Shader(Shader&& rhs);
-
-        /**
-         * @see Shader(Shader&&)
-         */
-
-        Shader& operator=(Shader&& rhs);
 
     private:
-
-        GLuint m_id = 0;
+        
+        /**
+         * Instructs OpenGL to create a shader object and initialises this Shader as a handle to it.
+         * Called by the GLHandle base class.
+         */
+        
+        void create(GLenum type);
+        
+        /**
+         * Instructs OpenGL to delete the shader object managed by this Shader object. Called by the
+         * GLHandle base class.
+         */
+        
+        void destroy();
     };
 }
 

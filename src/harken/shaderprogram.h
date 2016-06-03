@@ -2,9 +2,11 @@
 #define HARKEN_SHADERPROGRAM_H
 
 #include "global.h"
+#include "glhandle.h"
 #include "shader.h"
 
 #include <GL/glew.h>
+
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -31,27 +33,20 @@ namespace Harken {
     };
 
     /**
-     * Provides a handle to an OpenGL shader program object, and associated functionality. This is
-     * an RAII class that makes the necessary OpenGL calls to create a shader program on
-     * construction and to delete that same shader program on destruction. No reference counting is
-     * implemented, so the ShaderProgram can therefore not be copied; it can, however, be moved (in
-     * which case the moved-from ShaderProgram becomes a null handle and performs no action when
-     * deleted).
-     *
-     * The general setup for a ShaderProgram is to create a number of Shader instances, then pass
-     * each of these to ShaderProgram::attach(), then call ShaderProgram::link() to link the
-     * program. Alternatively, the initialiser-list constructor may be used to combine these steps.
+     * RAII clas that provides a handle to an OpenGL shader program object. The general setup for a
+     * ShaderProgram is to create a number of Shader instances, then pass each of these to
+     * ShaderProgram::attach(), then call ShaderProgram::link() to link thek program. Alternatively,
+     * the initialiser-list constructor may be used to combine these steps.
+     * 
+     * @see GLHandle
      */
 
-    class ShaderProgram {
+    class ShaderProgram : public GLHandle<ShaderProgram> {
+        friend class GLHandle<ShaderProgram>;
+        
     public:
 
-        /**
-         * Instructs OpenGL to create a shader program and initialises this ShaderProgram object as
-         * a handle to it.
-         */
-
-        ShaderProgram();
+        ShaderProgram() = default;
 
         /**
          * Instructs OpenGL to create a shader program and initialises this ShaderProgram object as
@@ -63,30 +58,6 @@ namespace Harken {
         explicit ShaderProgram(std::initializer_list<std::shared_ptr<Shader>> shaders);
 
         /**
-         * Instructs OpenGL to delete the shader program handled by this ShaderProgram object.
-         */
-
-        ~ShaderProgram();
-
-        ShaderProgram(const ShaderProgram&) = delete;
-        ShaderProgram& operator=(const ShaderProgram&) = delete;
-
-        /**
-         * Constructs a new ShaderProgram instance that replaces @p rhs as a handle to the
-         * underlying OpenGL shader program. After the new ShaderProgram is constructed, @p rhs is
-         * no longer a handle to a valid shader program, and will not cause OpenGL to destroy it
-         * when its lifetime ends.
-         */
-
-        ShaderProgram(ShaderProgram&& rhs);
-
-        /**
-         * @see ShaderProgram(ShaderProgram&&)
-         */
-
-        ShaderProgram& operator=(ShaderProgram&& rhs);
-
-        /**
          * Attaches a shader object to the program so that it will be linked together with other
          * shader objects to form a complete shader program when link() is called. The ShaderProgram
          * will take partial ownership of this shader until link() is called, at which point it will
@@ -95,7 +66,7 @@ namespace Harken {
          */
 
         void attach(std::shared_ptr<Shader> shader);
-
+        
         /**
          * Links shader objects previously passed into attach() into a complete shader program, and
          * performs error checking to ensure that the program was successfully linked (throwing a
@@ -112,9 +83,22 @@ namespace Harken {
         void use();
 
     private:
+        
+        /**
+         * Instructs OpenGL to create a shader program and initialises this ShaderProgram object as
+         * a handle to it. Called by the GLHandle base class.
+         */
+        
+        void create();
+        
+        /**
+         * Instructs OpenGL to delete the shader program managed by this ShaderProgram object.
+         * Called by the GLHandle base class.
+         */
+        
+        void destroy();
 
         std::vector<std::shared_ptr<Shader>> m_attachedShaders;
-        GLuint m_id = 0;
     };
 }
 
