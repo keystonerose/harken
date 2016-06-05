@@ -3,6 +3,8 @@
 #include "harken/shaderprogram.h"
 #include "harken/stringbuilder.h"
 #include "harken/vector.h"
+#include "harken/vertexarrayobject.h"
+#include "harken/vertexbufferobject.h"
 
 #include <GL/glew.h>
 #include <SDL.h>
@@ -32,11 +34,11 @@ enum AttribName {
 GLuint vaos[VAOCount];
 GLuint buffers[BufferCount];
 
-void render(SDLWindow& window) {
+void render(SDLWindow& window, VertexArrayObject& triangleVAO) {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindVertexArray(vaos[TriangleVAO]);
+    triangleVAO.bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glFlush();
@@ -59,19 +61,20 @@ int main() {
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        glGenVertexArrays(VAOCount, vaos);
-        glBindVertexArray(vaos[TriangleVAO]);
-
+        VertexArrayObject triangleVAO;
+        triangleVAO.bind();
+        
+        VertexBufferObject arrayBuffer{GL_ARRAY_BUFFER};
+        arrayBuffer.bind();
+        
         GLfloat vertices[3][2] = {
             { 0.0f,  0.433f},
             { 0.5f, -0.433f},
             {-0.5f, -0.433f}
         };
         
-        glGenBuffers(BufferCount, buffers);
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[ArrayBuffer]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+        
         const auto vertexShader   = std::make_shared<Shader>(GL_VERTEX_SHADER, "passthrough.vert");
         const auto fragmentShader = std::make_shared<Shader>(GL_FRAGMENT_SHADER, "red.frag");
 
@@ -94,7 +97,7 @@ int main() {
                 }
             }
 
-            render(window);
+            render(window, triangleVAO);
         }
     }
     catch (const std::exception& ex) {

@@ -33,7 +33,7 @@ namespace Harken {
     };
 
     /**
-     * RAII clas that provides a handle to an OpenGL shader program object. The general setup for a
+     * RAII class that provides a handle to an OpenGL shader program object. The general setup for a
      * ShaderProgram is to create a number of Shader instances, then pass each of these to
      * ShaderProgram::attach(), then call ShaderProgram::link() to link thek program. Alternatively,
      * the initialiser-list constructor may be used to combine these steps.

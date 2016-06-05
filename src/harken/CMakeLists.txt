@@ -6,6 +6,8 @@ add_library(${LIB_NAME} STATIC
     sdl.cpp
     shader.cpp
     shaderprogram.cpp
+    vertexarrayobject.cpp
+    vertexbufferobject.cpp
 )
 
 include_directories(${SDL2_INCLUDE_DIRS})
