@@ -62,6 +62,10 @@ namespace Harken {
 
         m_attachedShaders.clear();
     }
+    
+    GLint ShaderProgram::uniformLocation(const char * const name) const {
+        glGetUniformLocation(m_id, name);
+    }
 
     void ShaderProgram::use() {
         glUseProgram(m_id);

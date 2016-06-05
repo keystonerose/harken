@@ -10,6 +10,7 @@
 #include <SDL.h>
 
 #include <array>
+#include <cmath>
 #include <cstdlib>
 #include <memory>
 #include <iostream>
@@ -75,14 +76,17 @@ int main() {
         
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         
-        const auto vertexShader   = std::make_shared<Shader>(GL_VERTEX_SHADER, "passthrough.vert");
+        const auto vertexShader   = std::make_shared<Shader>(GL_VERTEX_SHADER, "uniform-scale.vert");
         const auto fragmentShader = std::make_shared<Shader>(GL_FRAGMENT_SHADER, "red.frag");
 
         ShaderProgram shaderProgram{vertexShader, fragmentShader};
         shaderProgram.use();
-
+        
         glVertexAttribPointer(PositionAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(PositionAttrib);
+        
+        auto scale = 0.0f;
+        const auto scaleLocation = shaderProgram.uniformLocation("scale");
 
         auto running = true;
         while (running) {
@@ -97,7 +101,9 @@ int main() {
                 }
             }
 
+            glUniform1f(scaleLocation, std::sin(scale));
             render(window, triangleVAO);
+            scale += 0.01f;
         }
     }
     catch (const std::exception& ex) {

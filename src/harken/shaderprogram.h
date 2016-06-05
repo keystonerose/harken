@@ -68,6 +68,15 @@ namespace Harken {
         void attach(std::shared_ptr<Shader> shader);
         
         /**
+         * Gets the OpenGL index of a named uniform variable in this shader program, or <tt>-1</tt>
+         * if no such variable exists. See <tt>glGetUniformLocation()</tt>.
+         * @param name A null-terminated string identifying the uniform variable to get the location
+         *             of.
+         */
+        
+        GLint uniformLocation(const char * name) const;
+        
+        /**
          * Links shader objects previously passed into attach() into a complete shader program, and
          * performs error checking to ensure that the program was successfully linked (throwing a
          * ShaderLinkException if not). If the link was successful, this function then detaches and
