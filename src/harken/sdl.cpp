@@ -9,9 +9,9 @@ namespace Harken {
         : Exception{StringBuilder{} << message << " Error: " << SDL_GetError()} {
     }
 
-    SDLManager::SDLManager() {
+    SDLManager::SDLManager(const Uint32 extraFlags) {
         
-        auto result = SDL_Init(SDL_INIT_VIDEO);
+        auto result = SDL_Init(SDL_INIT_VIDEO | extraFlags);
         if (result != 0) {
             throw SDLException{"Could not initialise SDL."};
         }

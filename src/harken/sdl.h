@@ -43,9 +43,11 @@ namespace Harken {
         
         /**
          * Initialises the SDL subsystem and sets some default OpenGL attributes on it.
+         * @param extraFlags Extra flags to pass to <tt>SDL_Init</tt>. Only @c SDL_INIT_VIDEO is
+         *                   included by default.
          */
         
-        SDLManager();
+        explicit SDLManager(Uint32 extraFlags = 0);
         
         /**
          * Quits the SDL subsystem.

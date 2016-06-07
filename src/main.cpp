@@ -10,6 +10,7 @@
 #include <SDL.h>
 
 #include <array>
+#include <atomic>
 #include <cmath>
 #include <cstdlib>
 #include <memory>
@@ -18,22 +19,11 @@
 
 using namespace Harken;
 
-enum VAOName {
-    TriangleVAO = 0,
-    VAOCount
-};
-
-enum BufferName {
-    ArrayBuffer = 0,
-    BufferCount
-};
-
 enum AttribName {
     PositionAttrib = 0
 };
 
-GLuint vaos[VAOCount];
-GLuint buffers[BufferCount];
+std::atomic<float> scale{0.0f};
 
 void render(SDLWindow& window, VertexArrayObject& triangleVAO) {
 
@@ -46,11 +36,17 @@ void render(SDLWindow& window, VertexArrayObject& triangleVAO) {
     window.swapBuffers();
 }
 
+Uint32 update(const Uint32 interval, void *) {
+    
+    scale = scale + 0.01f;
+    return interval;
+}
+
 int main() {
 
     try {
 
-        SDLManager sdl;
+        SDLManager sdl{SDL_INIT_TIMER};
         sdl.setOpenGLVersion(3, 3);
         auto window = sdl.createWindow("Harken", 1024, 768);
 
@@ -85,9 +81,10 @@ int main() {
         glVertexAttribPointer(PositionAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(PositionAttrib);
         
-        auto scale = 0.0f;
         const auto scaleLocation = shaderProgram.uniformLocation("scale");
 
+        SDL_AddTimer(1000 / 60, update, nullptr);
+        
         auto running = true;
         while (running) {
 
@@ -101,9 +98,8 @@ int main() {
                 }
             }
 
-            glUniform1f(scaleLocation, std::sin(scale));
+            glUniform1f(scaleLocation, std::sin(scale.load()));
             render(window, triangleVAO);
-            scale += 0.01f;
         }
     }
     catch (const std::exception& ex) {

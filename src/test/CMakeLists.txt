@@ -4,6 +4,7 @@ set(TEST_NAME test-all)
 set(TEST_SOURCES
     main.cpp
     test_math.cpp
+    test_matrix.cpp
     test_vector.cpp
 )
 
