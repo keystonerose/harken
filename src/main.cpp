@@ -1,10 +1,10 @@
-#include "harken/sdl.h"
-#include "harken/shader.h"
-#include "harken/shaderprogram.h"
-#include "harken/stringbuilder.h"
-#include "harken/vector.h"
-#include "harken/vertexarrayobject.h"
-#include "harken/vertexbufferobject.h"
+#include "harken_sdl.h"
+#include "harken_shader.h"
+#include "harken_shaderprogram.h"
+#include "harken_stringbuilder.h"
+#include "harken_vector.h"
+#include "harken_vertexarrayobject.h"
+#include "harken_vertexbufferobject.h"
 
 #include <GL/glew.h>
 #include <SDL.h>
@@ -37,7 +37,7 @@ void render(SDLWindow& window, VertexArrayObject& triangleVAO) {
 }
 
 Uint32 update(const Uint32 interval, void *) {
-    
+
     scale = scale + 0.01f;
     return interval;
 }
@@ -60,31 +60,31 @@ int main() {
 
         VertexArrayObject triangleVAO;
         triangleVAO.bind();
-        
+
         VertexBufferObject arrayBuffer{GL_ARRAY_BUFFER};
         arrayBuffer.bind();
-        
+
         GLfloat vertices[3][2] = {
             { 0.0f,  0.433f},
             { 0.5f, -0.433f},
             {-0.5f, -0.433f}
         };
-        
+
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        
+
         const auto vertexShader   = std::make_shared<Shader>(GL_VERTEX_SHADER, "uniform-scale.vert");
         const auto fragmentShader = std::make_shared<Shader>(GL_FRAGMENT_SHADER, "red.frag");
 
         ShaderProgram shaderProgram{vertexShader, fragmentShader};
         shaderProgram.use();
-        
+
         glVertexAttribPointer(PositionAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(PositionAttrib);
-        
+
         const auto scaleLocation = shaderProgram.uniformLocation("scale");
 
         SDL_AddTimer(1000 / 60, update, nullptr);
-        
+
         auto running = true;
         while (running) {
 

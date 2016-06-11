@@ -1,8 +1,8 @@
 #ifndef HARKEN_MATRIX_H
 #define HARKEN_MATRIX_H
 
-#include "global.h"
-#include "vector.h"
+#include "harken_global.h"
+#include "harken_vector.h"
 
 #include <algorithm>
 #include <array>

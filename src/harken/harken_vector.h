@@ -1,7 +1,7 @@
 #ifndef HARKEN_VECTOR_H
 #define HARKEN_VECTOR_H
 
-#include "global.h"
+#include "harken_global.h"
 
 #include <array>
 #include <cassert>

@@ -1,6 +1,6 @@
-#include "exception.h"
-#include "shader.h"
-#include "stringbuilder.h"
+#include "harken_exception.h"
+#include "harken_shader.h"
+#include "harken_stringbuilder.h"
 
 #include <cassert>
 #include <fstream>
@@ -83,7 +83,7 @@ namespace Harken {
             throw ShaderCompilationException{type, sourceFilePath, infoLog.get()};
         }
     }
-    
+
     void Shader::create(const GLenum type) {
         m_id = glCreateShader(type);
     }

@@ -10,5 +10,7 @@ set(TEST_SOURCES
 
 add_definitions(-DBOOST_TEST_DYN_LINK)
 add_executable(${TEST_NAME} ${TEST_SOURCES})
+
+include_directories(../${LIB_INCLUDE_DIR})
 target_link_libraries(${TEST_NAME} ${LIB_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 

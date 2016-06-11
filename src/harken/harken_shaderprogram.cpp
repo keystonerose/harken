@@ -1,5 +1,5 @@
-#include "shaderprogram.h"
-#include "stringbuilder.h"
+#include "harken_shaderprogram.h"
+#include "harken_stringbuilder.h"
 
 #include <utility>
 
@@ -27,11 +27,11 @@ namespace Harken {
         glAttachShader(m_id, shader->m_id);
         m_attachedShaders.push_back(std::move(shader));
     }
-    
+
     void ShaderProgram::create() {
         m_id = glCreateProgram();
     }
-    
+
     void ShaderProgram::destroy() {
         glDeleteProgram(m_id);
     }
@@ -62,7 +62,7 @@ namespace Harken {
 
         m_attachedShaders.clear();
     }
-    
+
     GLint ShaderProgram::uniformLocation(const char * const name) const {
         glGetUniformLocation(m_id, name);
     }

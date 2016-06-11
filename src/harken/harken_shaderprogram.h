@@ -1,9 +1,9 @@
 #ifndef HARKEN_SHADERPROGRAM_H
 #define HARKEN_SHADERPROGRAM_H
 
-#include "global.h"
-#include "glhandle.h"
-#include "shader.h"
+#include "harken_global.h"
+#include "harken_glhandle.h"
+#include "harken_shader.h"
 
 #include <GL/glew.h>
 
@@ -37,13 +37,13 @@ namespace Harken {
      * ShaderProgram is to create a number of Shader instances, then pass each of these to
      * ShaderProgram::attach(), then call ShaderProgram::link() to link thek program. Alternatively,
      * the initialiser-list constructor may be used to combine these steps.
-     * 
+     *
      * @see GLHandle
      */
 
     class ShaderProgram : public GLHandle<ShaderProgram> {
         friend class GLHandle<ShaderProgram>;
-        
+
     public:
 
         ShaderProgram() = default;
@@ -66,16 +66,16 @@ namespace Harken {
          */
 
         void attach(std::shared_ptr<Shader> shader);
-        
+
         /**
          * Gets the OpenGL index of a named uniform variable in this shader program, or <tt>-1</tt>
          * if no such variable exists. See <tt>glGetUniformLocation()</tt>.
          * @param name A null-terminated string identifying the uniform variable to get the location
          *             of.
          */
-        
+
         GLint uniformLocation(const char * name) const;
-        
+
         /**
          * Links shader objects previously passed into attach() into a complete shader program, and
          * performs error checking to ensure that the program was successfully linked (throwing a
@@ -92,19 +92,19 @@ namespace Harken {
         void use();
 
     private:
-        
+
         /**
          * Instructs OpenGL to create a shader program and initialises this ShaderProgram object as
          * a handle to it. Called by the GLHandle base class.
          */
-        
+
         void create();
-        
+
         /**
          * Instructs OpenGL to delete the shader program managed by this ShaderProgram object.
          * Called by the GLHandle base class.
          */
-        
+
         void destroy();
 
         std::vector<std::shared_ptr<Shader>> m_attachedShaders;

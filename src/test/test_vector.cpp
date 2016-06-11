@@ -1,5 +1,5 @@
-#include "harken/math.h"
-#include "harken/vector.h"
+#include "harken_math.h"
+#include "harken_vector.h"
 
 #include <boost/test/unit_test.hpp>
 #include <array>

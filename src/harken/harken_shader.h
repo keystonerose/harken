@@ -1,9 +1,9 @@
 #ifndef HARKEN_SHADER_H
 #define HARKEN_SHADER_H
 
-#include "global.h"
-#include "exception.h"
-#include "glhandle.h"
+#include "harken_global.h"
+#include "harken_exception.h"
+#include "harken_glhandle.h"
 
 #include <GL/glew.h>
 
@@ -35,7 +35,7 @@ namespace Harken {
                                             const char* sourceFilePath,
                                             const char* infoLog);
     };
-    
+
     /**
      * Provides a handle to an OpenGL shader object, and associated functionality. This is an RAII
      * class that makes the necessary OpenGL calls to create a shader object on construction and to
@@ -48,9 +48,9 @@ namespace Harken {
     class Shader : public GLHandle<Shader> {
         friend class GLHandle<Shader>;
         friend class ShaderProgram;
-        
+
     public:
-        
+
         /**
          * Creates a new OpenGL shader object of the specified @p type, loads it source from the
          * file at @p sourcefilePath, and compiles it. The resulting compiled shader object can then
@@ -60,19 +60,19 @@ namespace Harken {
         Shader(GLenum type, const char * sourceFilePath);
 
     private:
-        
+
         /**
          * Instructs OpenGL to create a shader object and initialises this Shader as a handle to it.
          * Called by the GLHandle base class.
          */
-        
+
         void create(GLenum type);
-        
+
         /**
          * Instructs OpenGL to delete the shader object managed by this Shader object. Called by the
          * GLHandle base class.
          */
-        
+
         void destroy();
     };
 }

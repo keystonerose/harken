@@ -1,5 +1,5 @@
-#include "harken/matrix.h"
-#include "harken/vector.h"
+#include "harken_matrix.h"
+#include "harken_vector.h"
 
 #include <boost/test/unit_test.hpp>
 #include <array>
@@ -81,6 +81,11 @@ BOOST_AUTO_TEST_CASE(construction_accessors) {
     BOOST_CHECK_EQUAL(constPopulated.column(1), Vector4i(2, 6, 10, 14));
     BOOST_CHECK_EQUAL(constPopulated.column(2), Vector4i(3, 7, 11, 15));
     BOOST_CHECK_EQUAL(constPopulated.column(3), Vector4i(4, 8, 12, 16));
+
+    BOOST_CHECK_EQUAL(constPopulated(0, 0), 1);
+    BOOST_CHECK_EQUAL(constPopulated(1, 3), 8);
+    BOOST_CHECK_EQUAL(constPopulated(3, 1), 14);
+    BOOST_CHECK_EQUAL(constPopulated(3, 3), 16);
 
     Matrix4i mutablePopulated{
          1,  2,  3,  4,

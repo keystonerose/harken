@@ -1,8 +1,8 @@
 #ifndef HARKEN_MATH_H
 #define HARKEN_MATH_H
 
-#include "global.h"
-#include "vector.h"
+#include "harken_global.h"
+#include "harken_vector.h"
 
 #include <cmath>
 #include <limits>
@@ -21,14 +21,14 @@ namespace Harken {
 
     // Uses SFINAE to restrict applicable types to floating-point ones since we need to be able to
     // distinguish between this almostEqual() and the vector form during overload resolution.
-    
+
     template<
         typename Float,
         typename = std::enable_if_t<std::is_floating_point<Float>::value>
     >
     bool almostEqual(const Float lhs, const Float rhs,
                      const Float maxRelDiff = std::numeric_limits<Float>::epsilon()) {
-        
+
         const auto absLHS = std::abs(lhs);
         const auto absRHS = std::abs(rhs);
         const auto maxAbs = (absLHS > absRHS) ? absLHS : absRHS;
@@ -36,7 +36,7 @@ namespace Harken {
         const auto diff = std::abs(lhs - rhs);
         return diff <= maxAbs * maxRelDiff;
     }
-    
+
     /**
      * Uses the floating-point overload of Harken::almostEqual() to compare two vectors of
      * floating-point numbers. Returns @c true if every component of @p lhs is almost equal to the
