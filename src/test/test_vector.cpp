@@ -4,13 +4,13 @@
 #include <boost/test/unit_test.hpp>
 #include <array>
 
-using Harken::Vector;
-using Harken::VectorSpan;
+template<typename T> using Vector3 = Harken::Vector<T, 3>;
+using Vector3i = Vector3<int>;
+using Vector3f = Vector3<float>;
 
-using Vector3i = Vector<int, 3>;
-using Vector3f = Vector<float, 3>;
-using VectorSpan3i = VectorSpan<int, 3>;
-using VectorSpan3f = VectorSpan<float, 3>;
+template<typename T> using VectorSpan3 = Harken::VectorSpan<T, 3>;
+using VectorSpan3i = VectorSpan3<int>;
+using VectorSpan3f = VectorSpan3<float>;
 
 template<typename VectorType, typename ElementType>
 bool elementsEqual(const VectorType& v, const ElementType x, const ElementType y, const ElementType z) {
@@ -54,6 +54,24 @@ BOOST_AUTO_TEST_CASE(construction_accessors) {
 
     externalData[0] = 0;
     BOOST_CHECK_EQUAL(vectorSpan, Vector3i(0, 2, 3));
+}
+
+BOOST_AUTO_TEST_CASE(stride) {
+
+    std::array<int, 9> externalData{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    VectorSpan3i stridedSpan1{externalData, 0, 3};
+    VectorSpan3i stridedSpan2{externalData, 1, 3};
+    VectorSpan3i stridedSpan3{externalData, 2, 3};
+
+    BOOST_CHECK_EQUAL(stridedSpan1, Vector3i(1, 4, 7));
+    BOOST_CHECK_EQUAL(stridedSpan2, Vector3i(2, 5, 8));
+    BOOST_CHECK_EQUAL(stridedSpan3, Vector3i(3, 6, 9));
+
+    stridedSpan1 = Vector3i{0, 0, 0};
+    stridedSpan2 *= 2;
+
+    const std::array<int, 9> mutatedData{0, 4, 3, 0, 10, 6, 0, 16, 9};
+    BOOST_CHECK(externalData == mutatedData);
 }
 
 BOOST_AUTO_TEST_CASE(assignment) {

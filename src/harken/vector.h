@@ -10,7 +10,7 @@
 #include <type_traits>
 
 namespace Harken {
-    
+
     template<typename T, int Size, template<typename, int> class OwnershipPolicy>
     class Vector;
 
@@ -111,8 +111,8 @@ namespace Harken {
 
         /**
          * Constructs the vector and initialises its coordinates to the provided values. This
-         * constructor must be called with <tt>Size</tt> arguments, each corresponding to a
-         * component of the vector.
+         * constructor must be called with exactly @c Size arguments, each convertible to the
+         * vector's component type @c T and corresponding to a component of the vector.
          */
 
         template<typename... Args>
@@ -120,7 +120,8 @@ namespace Harken {
             : m_v{args...} {
 
             static_assert(sizeof...(Args) == Size,
-                "The number of arguments provided to the Vector constructor does not match its dimension.");
+                 "The number of arguments provided to the Vector constructor must match its "
+                 "dimension.");
         }
 
         /**
@@ -237,14 +238,10 @@ namespace Harken {
 
     template<typename T, int Size, template<typename, int> class OwnershipPolicy = OwningVectorPolicy>
     class Vector : public OwnershipPolicy<T, Size> {
-    private:
-        
-        static_assert(std::is_arithmetic<T>::value, "The component type of a Vector must be arithmetic.");
-        
-        using ThisType = Vector<T, Size, OwnershipPolicy>;
-        
     public:
-        
+
+        static_assert(std::is_arithmetic<T>::value, "The component type of a Vector must be arithmetic.");
+
         using ComponentType = T;
         using OwnershipPolicy<T, Size>::OwnershipPolicy;
 
@@ -262,7 +259,7 @@ namespace Harken {
         // before it can be set); this behaviour is implemented in the ownership policy.
 
         template<typename X, template<typename, int> class RHSOwnershipPolicy>
-        ThisType& operator=(const Vector<X, Size, RHSOwnershipPolicy>& rhs) {
+        Vector<T, Size, OwnershipPolicy>& operator=(const Vector<X, Size, RHSOwnershipPolicy>& rhs) {
 
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] = rhs[i];
@@ -271,7 +268,7 @@ namespace Harken {
         }
 
         template<template<typename, int> class RHSOwnershipPolicy>
-        ThisType& operator+=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+        Vector<T, Size, OwnershipPolicy>& operator+=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
 
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] += rhs[i];
@@ -280,7 +277,7 @@ namespace Harken {
         }
 
         template<template<typename, int> class RHSOwnershipPolicy>
-        ThisType& operator-=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
+        Vector<T, Size, OwnershipPolicy>& operator-=(const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
 
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] -= rhs[i];
@@ -288,7 +285,7 @@ namespace Harken {
             return *this;
         }
 
-        ThisType& operator*=(const T rhs) {
+        Vector<T, Size, OwnershipPolicy>& operator*=(const T rhs) {
 
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] *= rhs;
@@ -296,7 +293,7 @@ namespace Harken {
             return *this;
         }
 
-        ThisType& operator/=(const T rhs) {
+        Vector<T, Size, OwnershipPolicy>& operator/=(const T rhs) {
 
             for (auto i = 0; i < Size; ++i) {
                 (*this)[i] /= rhs;
@@ -313,11 +310,13 @@ namespace Harken {
     bool operator==(const Vector<T, Size, LHSOwnershipPolicy>& lhs,
                     const Vector<T, Size, RHSOwnershipPolicy>& rhs) {
 
-        auto i = 0;
-        while (i < Size && lhs[i] == rhs[i]) {
-            ++i;
+        for (auto i = 0; i < Size; ++i) {
+            if (lhs[i] != rhs[i]) {
+                return false;
+            }
         }
-        return i == Size;
+
+        return true;
     }
 
     template<
@@ -337,12 +336,12 @@ namespace Harken {
 
     template<typename T, int Size, template<typename, int> class OwnershipPolicy>
     Vector<T, Size> operator+(const Vector<T, Size, OwnershipPolicy>& val) {
-        return val;
+        return Vector<T, Size>{val};
     }
 
     template<typename T, int Size, template<typename, int> class OwnershipPolicy>
     Vector<T, Size> operator-(const Vector<T, Size, OwnershipPolicy>& val) {
-        return -1 * val;
+        return Vector<T, Size>{-1 * val};
     }
 
     template<
@@ -393,18 +392,18 @@ namespace Harken {
     }
 
     /**
-     * Prints the vector @p v to @p os, using the current formatting manipulators on @p os.
+     * Prints @p vector to @p os, using the current formatting manipulators on @p os.
      */
 
     template<typename T, int Size, template<typename, int> class OwnershipPolicy>
-    std::ostream& operator<<(std::ostream& os, const Vector<T, Size, OwnershipPolicy>& v) {
+    std::ostream& operator<<(std::ostream& os, const Vector<T, Size, OwnershipPolicy>& vector) {
 
         os << '(';
         for (auto i = 0; i < Size; ++i) {
             if (i > 0) {
                 os << ", ";
             }
-            os << v[i];
+            os << vector[i];
         }
 
         os << ')';
