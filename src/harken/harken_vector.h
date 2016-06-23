@@ -92,6 +92,46 @@ namespace Harken {
     protected:
         ~NamedVectorAccessPolicy() = default;
     };
+    
+    template<typename T, template<typename, int> class OwnershipPolicy>
+    class NamedVectorAccessPolicy<T, 4, OwnershipPolicy> {
+    public:
+
+        T x() const {
+            return get(*this, 0);
+        }
+
+        T y() const {
+            return get(*this, 1);
+        }
+
+        T z() const {
+            return get(*this, 2);
+        }
+        
+        T w() const {
+            return get(*this, 3);
+        }
+
+        void setX(const T value) {
+            set(*this, 0, value);
+        }
+
+        void setY(const T value) {
+            set(*this, 1, value);
+        }
+
+        void setZ(const T value) {
+            set(*this, 2, value);
+        }
+        
+        void setW(const T value) {
+            set(*this, 3, value);
+        }
+
+    protected:
+        ~NamedVectorAccessPolicy() = default;
+    };
 
     /**
      * Ownership policy for a vector that owns its coordinate data. Provides an implementation of
@@ -453,9 +493,27 @@ namespace Harken {
         }
         return result;
     }
+    
+    template<typename T>
+    using Vector2 = Harken::Vector<T, 2>;
+    
+    template<typename T>
+    using Vector3 = Harken::Vector<T, 3>;
+    
+    template<typename T>
+    using Vector4 = Harken::Vector<T, 4>;
 
     template<typename T, int Size>
     using VectorSpan = Vector<T, Size, SpanVectorPolicy>;
+    
+    template<typename T>
+    using VectorSpan2 = Harken::VectorSpan<T, 2>;
+    
+    template<typename T>
+    using VectorSpan3 = Harken::VectorSpan<T, 3>;
+    
+    template<typename T>
+    using VectorSpan4 = Harken::VectorSpan<T, 4>;
 }
 
 #endif

@@ -4,11 +4,12 @@
 #include <boost/test/unit_test.hpp>
 #include <array>
 
-template<typename T> using Vector3 = Harken::Vector<T, 3>;
+using Harken::Vector3;
+using Harken::VectorSpan3;
+
 using Vector3i = Vector3<int>;
 using Vector3f = Vector3<float>;
 
-template<typename T> using VectorSpan3 = Harken::VectorSpan<T, 3>;
 using VectorSpan3i = VectorSpan3<int>;
 using VectorSpan3f = VectorSpan3<float>;
 

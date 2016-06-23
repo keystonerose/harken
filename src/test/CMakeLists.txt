@@ -3,6 +3,7 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 set(TEST_NAME test-all)
 set(TEST_SOURCES
     main.cpp
+    test_glmath.cpp
     test_math.cpp
     test_matrix.cpp
     test_vector.cpp

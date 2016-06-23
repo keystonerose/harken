@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <array>
+#include <ostream>
 
 namespace Harken {
 
@@ -107,6 +108,16 @@ namespace Harken {
 
             return result;
         }
+        
+        /**
+         * Gets a pointer to the raw array of data containing the elements of the matrix, in
+         * <em>column-major</em> order for greater efficiently when used in conjunction with OpenGL.
+         * The array contains <tt>RowCount * ColCount</tt> entries.
+         */
+        
+        const T * data() const {
+            return m_data.data();
+        }
 
         /**
          * Gets a vector spanning a single row of the matrix. This vector refers directly to the
@@ -159,7 +170,47 @@ namespace Harken {
 
         return !(lhs == rhs);
     }
-
+    
+    template<typename T, int LHSRowCount, int InnerDimension, int RHSColCount>
+    Matrix<T, LHSRowCount, RHSColCount> operator*(const Matrix<T, LHSRowCount, InnerDimension>& lhs,
+                                                  const Matrix<T, InnerDimension, RHSColCount>& rhs) {
+        
+        Matrix<T, LHSRowCount, RHSColCount> result;
+        
+        for (auto i = 0; i < LHSRowCount; ++i) {
+            for (auto j = 0; j < RHSColCount; ++j) {
+                
+                auto value = T{0};
+                for (auto k = 0; k < InnerDimension; ++k) {
+                    value += lhs(i, k) * rhs(k, j);
+                }
+                
+                result(i, j) = value;
+            }
+        }
+        
+        return result;
+    }
+    
+    template<typename T, int RowCount, int ColCount, template<typename, int> class VectorOwnershipPolicy>
+    Vector<T, ColCount> operator*(const Matrix<T, RowCount, ColCount>& lhs,
+                                  const Vector<T, ColCount, VectorOwnershipPolicy>& rhs) {
+        
+        Vector<T, ColCount> result;
+        
+        for (auto i = 0; i < RowCount; ++i) {
+            
+            auto value = T{0};
+            for (auto j = 0; j < ColCount; ++j) {
+                value += lhs(i, j) * rhs[j];
+            }
+            
+            result[i] = value;
+        }
+        
+        return result;
+    }
+    
     /**
      * Prints @p matrix to @p os, using the current formatting manipulators on @p os. The printed
      * representation of the matrix is formatted in a single line.
@@ -187,6 +238,9 @@ namespace Harken {
         os << ']';
         return os;
     }
+    
+    template<typename T>
+    using Matrix4 = Harken::Matrix<T, 4, 4>;
 }
 
 #endif

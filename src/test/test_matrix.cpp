@@ -2,13 +2,18 @@
 #include "harken_vector.h"
 
 #include <boost/test/unit_test.hpp>
+
 #include <array>
-#include <iostream>
+#include <tuple>
+#include <vector>
 
 using Harken::Matrix;
+using Harken::Matrix4;
 using Harken::Vector;
 
-template<typename T> using Matrix4 = Harken::Matrix<T, 4, 4>;
+template<typename T> using Matrix2 = Harken::Matrix<T, 2, 2>;
+using Matrix2i = Matrix2<int>;
+
 using Matrix4i = Matrix4<int>;
 
 template<typename T> using Matrix3x4 = Matrix<T, 3, 4>;
@@ -109,6 +114,26 @@ BOOST_AUTO_TEST_CASE(construction_accessors) {
 
     mutablePopulated.columnSpan(3)[0] = 0;
     BOOST_CHECK_EQUAL(mutablePopulated(0, 3), 0);
+}
+
+BOOST_AUTO_TEST_CASE(column_major_data) {
+
+    const Matrix2i matrix{
+        1, 2,
+        3, 4
+    };
+
+    const auto * colMajorData = matrix.data();
+
+    BOOST_CHECK_EQUAL(colMajorData[0], 1);
+    BOOST_CHECK_EQUAL(colMajorData[1], 3);
+    BOOST_CHECK_EQUAL(colMajorData[2], 2);
+    BOOST_CHECK_EQUAL(colMajorData[3], 4);
+}
+
+BOOST_AUTO_TEST_CASE(multiplication) {
+
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
